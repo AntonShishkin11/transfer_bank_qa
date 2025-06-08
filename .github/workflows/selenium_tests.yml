@@ -20,19 +20,18 @@ jobs:
         python-version: "3.10"
 
     - name: Install dependencies
-      run: pip install -r requirements.txt
-
-    - name: Setup Chrome
-      uses: browser-actions/setup-chrome@v1
-
-    - name: Setup ChromeDriver
-      uses: browser-actions/setup-chromedriver@v1
+      run:
+         pip install -r requirements.txt
+         sudo apt-get update
+         sudo apt-get install -y chromium-browser
+         export CHROME_BIN=$(which chromium-browser)
+      
 
     - name: Start test server
       working-directory: ./dist
       run: python3 -m http.server 8000 &
 
     - name: Run tests
+      run: pytest
       env:
-        CHROME_BIN: google-chrome
-      run: pytest --tb=short -v
+        PYTHONBUFFERED: 1
