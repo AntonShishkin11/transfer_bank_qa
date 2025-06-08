@@ -1,0 +1,37 @@
+name: Run Selenium + Pytest tests
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: "3.10"
+
+    - name: Install dependencies
+      run: |
+         pip install -r requirements.txt
+         sudo apt-get update
+         sudo apt-get install -y chromium-browser
+         export CHROME_BIN=$(which chromium-browser)
+      
+
+    - name: Start test server
+      working-directory: ./dist
+      run: python3 -m http.server 8000 &
+
+    - name: Run tests
+      run: pytest
+      env:
+        PYTHONBUFFERED: 1
