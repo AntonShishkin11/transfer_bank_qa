@@ -32,6 +32,6 @@ jobs:
       run: python3 -m http.server 8000 &
 
     - name: Run tests
-      run: pytest
+      run: pytest -v
       env:
         PYTHONBUFFERED: 1
