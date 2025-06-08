@@ -22,22 +22,19 @@ jobs:
     - name: Install dependencies
       run: pip install -r requirements.txt
 
-    - name: Install Google Chrome and ChromeDriver
+    - name: Install Google Chrome v124
       run: |
-        sudo apt-get update
-        sudo apt-get install -y wget curl unzip gnupg2
-        wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo gpg --dearmor -o /usr/share/keyrings/google-linux-signing-keyring.gpg
-        echo 'deb [arch=amd64 signed-by=/usr/share/keyrings/google-linux-signing-keyring.gpg] http://dl.google.com/linux/chrome/deb/ stable main' | sudo tee /etc/apt/sources.list.d/google-chrome.list
-        sudo apt-get update
-        sudo apt-get install -y google-chrome-stable
+        wget https://dl.google.com/linux/chrome/deb/pool/main/g/google-chrome-stable/google-chrome-stable_124.0.6367.91-1_amd64.deb
+        sudo apt install -y ./google-chrome-stable_124.0.6367.91-1_amd64.deb
 
-        CHROME_VERSION=$(google-chrome --version | grep -oP '\d+\.\d+\.\d+')
-        MAJOR_VERSION=$(echo $CHROME_VERSION | cut -d '.' -f 1)
-        DRIVER_VERSION=$(curl -s "https://chromedriver.storage.googleapis.com/LATEST_RELEASE_$MAJOR_VERSION")
-        wget -q "https://chromedriver.storage.googleapis.com/$DRIVER_VERSION/chromedriver_linux64.zip"
+    - name: Install ChromeDriver v124
+      run: |
+        wget -q https://chromedriver.storage.googleapis.com/124.0.6367.91/chromedriver_linux64.zip
         unzip chromedriver_linux64.zip
-        sudo mv chromedriver /usr/local/bin/chromedriver
+        sudo mv chromedriver /usr/local/bin/
         sudo chmod +x /usr/local/bin/chromedriver
+        chromedriver --version
+        google-chrome --version
 
     - name: Start test server
       working-directory: ./dist
